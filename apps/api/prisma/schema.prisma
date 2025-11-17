@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PATIENT
+  CLINICIAN
+  ADMIN
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(PATIENT)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  patients Patient[] @relation("ClinicianPatients")
+  patient  Patient?
+}
+
+model Patient {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  clinicianId String?
+  createdAt   DateTime @default(now())
+
+  user      User      @relation(fields: [userId], references: [id])
+  clinician User?     @relation("ClinicianPatients", fields: [clinicianId], references: [id])
+  sessions  Session[]
+  devices   Device[]
+}
+
+model Device {
+  id        String   @id @default(cuid())
+  patientId String
+  name      String
+  bleUuid   String   @unique
+  createdAt DateTime @default(now())
+
+  patient Patient @relation(fields: [patientId], references: [id])
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  patientId String
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  romMaxDeg Float?
+  notes     String?
+
+  patient Patient @relation(fields: [patientId], references: [id])
+}

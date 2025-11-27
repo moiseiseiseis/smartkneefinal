@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  // 🔍 DEBUG: ver qué DATABASE_URL ve Render (puedes quitarlo luego)
+  // 🔍 DEBUG: ver qué DATABASE_URL ve Render 
   const rawDbUrl = process.env.DATABASE_URL ?? 'NO_DATABASE_URL';
   console.log(
     'DATABASE_URL (debug, primeros 80 chars):',
@@ -20,4 +20,4 @@ async function bootstrap() {
   console.log(`API running on http://localhost:${port}/api/v1`);
 }
 
-bootstrap();
+bootstrap(); 

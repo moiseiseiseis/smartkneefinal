@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url       = env("DATABASE_URL")
 }
 
 enum Role {
@@ -14,11 +14,11 @@ enum Role {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
+  id        String    @id @default(cuid())
+  email     String    @unique
   password  String
   name      String
-  role      Role     @default(PATIENT)
+  role      Role      @default(PATIENT)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -27,8 +27,8 @@ model User {
 }
 
 model Patient {
-  id          String   @id @default(cuid())
-  userId      String   @unique
+  id          String    @id @default(cuid())
+  userId      String    @unique
   clinicianId String?
   createdAt   DateTime @default(now())
 
@@ -39,22 +39,31 @@ model Patient {
 }
 
 model Device {
-  id        String   @id @default(cuid())
-  patientId String
-  name      String
-  bleUuid   String   @unique
-  createdAt DateTime @default(now())
+  id          String    @id @default(cuid())
+  patientId   String
+  name        String
+  bleUuid     String    @unique
+  createdAt   DateTime @default(now())
 
   patient Patient @relation(fields: [patientId], references: [id])
 }
 
+// 🔥 BLOQUE CORREGIDO: Incluye los nuevos campos de contexto de la sesión
 model Session {
-  id        String    @id @default(cuid())
-  patientId String
-  startedAt DateTime  @default(now())
-  endedAt   DateTime?
-  romMaxDeg Float?
-  notes     String?
+  id            String    @id @default(cuid())
+  patientId     String
+  startedAt     DateTime  @default(now())
+  
+  // Columnas existentes:
+  endedAt       DateTime?
+  romMaxDeg     Float?
+  notes         String?
+  
+  // 🔥 NUEVOS CAMPOS AÑADIDOS DESDE FLUTTER
+  durationSecs  Int?      // Duración en segundos
+  exerciseId    String?   // ID del ejercicio (e.g., 'heel_slide')
+  phaseLabel    String?   // Etiqueta de la fase (e.g., 'Fase 1 - Movilidad inicial')
+  sessionType   String?   // Tipo de sesión (e.g., 'GUIDED_EXERCISE', 'WALKING', 'FREE_MONITORING')
 
   patient Patient @relation(fields: [patientId], references: [id])
 }
